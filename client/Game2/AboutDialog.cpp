@@ -4,6 +4,8 @@
 //
 // Copyright (c) 2009 Michael Imamura.
 //
+// Derivative Work by Geoffrey White, 2020.
+//
 // Licensed under GrokkSoft HoverRace SourceCode License v1.0(the "License");
 // you may not use this file except in compliance with the License.
 //
@@ -90,14 +92,16 @@ BOOL CALLBACK AboutDialog::DlgFunc(HWND pWindow, UINT pMsgId, WPARAM pWParam, LP
 					_("with contributions from (in alphabetical order)") << ":\r\n"
 					"\r\n"
 					"Austin L. Brock\r\n"
-					"Ryan Curtin\r\n"
-					"Michael Imamura\r\n"
+					"Ryan Curtin - https://github.com/rcurtin\r\n"
+					"Michael Imamura - https://github.com/ZoogieZork\r\n"
+					"John McCourt - https://github.com/johnsie\r\n"
+					"Geoffrey White - https://github.com/geoff-white\r\n"
 					"\r\n" <<
 					_("and with the help of the many testers willing to put up with bugs and other strange happenings.") << "\r\n"
 					"\r\n" <<
 					_("visit us at") << " " << HR_WEBSITE << "\r\n"
 					"\r\n"
-					"HoverRace © Richard Langlois, Grokksoft Inc.\r\n"
+					"HoverRace is copyright © Richard Langlois, Grokksoft Inc.\r\n"
 					"\r\n" <<
 					_("Thanks also to the following projects") << ":\r\n"
 					"\r\n"
@@ -112,10 +116,10 @@ BOOL CALLBACK AboutDialog::DlgFunc(HWND pWindow, UINT pMsgId, WPARAM pWParam, LP
 					"\r\n"
 					"LiteUnzip - Jeff Glatt, based on work by Lucian Wischik, based on work by Jean-Loup Gailly and Mark Adler.\r\n"
 					"\r\n"
-					"Lua -- Copyright (c) 1994-2008 Lua.org, PUC-Rio.\r\n"
+					"Lua -- Copyright © 1994-2008 Lua.org, PUC-Rio.\r\n"
 					"  http://www.lua.org/\r\n"
 					"\r\n"
-					"Luabind -- Copyright (c) 2003 Daniel Wallin and Arvid Norberg\r\n"
+					"Luabind -- Copyright © 2003 Daniel Wallin and Arvid Norberg\r\n"
 					"  http://www.rasterbar.com/products/luabind.html\r\n"
 				;
 				SetDlgItemTextW(pWindow, IDC_ABOUT_TXT, Str::UW(oss.str().c_str()));
