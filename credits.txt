@@ -1,4 +1,4 @@
-HoverRace 1.23 is brought to you by:
+HoverRace is brought to you by:
 
 Richard Langlois (original author)
   Grokksoft Inc.
@@ -6,15 +6,16 @@ Richard Langlois (original author)
 with contributions from (in alphabetical order):
 
 Austin L. Brock
-Ryan Curtin
-Michael Imamura
-Geoffrey White
+Ryan Curtin - https://github.com/rcurtin
+Michael Imamura - https://github.com/ZoogieZork
+John McCourt - https://github.com/johnsie
+Geoffrey White - https://github.com/geoff-white
 
 and with the help of the many testers willing to put up with bugs and other strange happenings.
 
-Visit us at http://www.hoverrace.com/
+Visit us at http://www.hoverrace.org/
 
-HoverRace is copyright (c) Richard Langlois and Grokksoft Inc.
+HoverRace is copyright © Richard Langlois, Grokksoft Inc.
 
 Thanks also to the following projects:
 
@@ -28,3 +29,9 @@ LibYAML - Kirill Simonov and contributors.
   http://pyyaml.org/wiki/LibYAML
 
 LiteUnzip - Jeff Glatt, based on work by Lucian Wischik, based on work by Jean-Loup Gailly and Mark Adler.
+
+Lua -- Copyright © 1994-2008 Lua.org, PUC-Rio.
+  http://www.lua.org/
+
+Luabind -- Copyright © 2003 Daniel Wallin and Arvid Norberg
+  http://www.rasterbar.com/products/luabind.html
