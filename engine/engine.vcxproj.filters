@@ -634,6 +634,9 @@
     <CustomBuild Include="..\lib\LiteUnzip.dll">
       <Filter>Libraries</Filter>
     </CustomBuild>
+	 <CustomBuild Include="..\lib\OpenAL32.dll">
+      <Filter>Libraries</Filter>
+    </CustomBuild>
     <CustomBuild Include="..\lib\lua5.1.dll">
       <Filter>Libraries</Filter>
     </CustomBuild>

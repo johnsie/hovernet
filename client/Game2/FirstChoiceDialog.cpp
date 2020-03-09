@@ -57,7 +57,7 @@ BOOL CALLBACK FirstChoiceDialog::DlgFunc(HWND pWindow, UINT pMsgId, WPARAM pWPar
 			SetDlgItemTextW(pWindow, IDOK, Str::UW(_("OK")));
 			SetDlgItemTextW(pWindow, IDCANCEL, Str::UW(_("Cancel")));
 			SetDlgItemTextW(pWindow, IDC_MAKE_SURE,
-				Str::UW(_("Make sure that you are connected to the Internet before clicking on OK.  If you have any problems, visit our forums at http://www.hoverrace.com/bb for help.")));
+				Str::UW(_("Make sure you are connected to the Internet before clicking OK. If you have any problems please visit http://hoverrace.org for help")));
 			return TRUE;
 
 		case WM_COMMAND:
