@@ -56,6 +56,10 @@
     <IncludePath>D:\local\boost_1_72_0;$(IncludePath)</IncludePath>
     <LibraryPath>D:\local\boost_1_72_0\lib32-msvc-14.2;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>D:\local\boost_1_72_0;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\local\boost_1_72_0\lib32-msvc-14.2;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -110,6 +114,7 @@
       <BaseAddress>0x61000000</BaseAddress>
       <FixedBaseAddress>
       </FixedBaseAddress>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>copy ..\res\ObjFac1.dat ..\share</Command>
