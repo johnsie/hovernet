@@ -24,15 +24,16 @@
 #ifndef LUABIND_OBJECT_REP_HPP_INCLUDED
 #define LUABIND_OBJECT_REP_HPP_INCLUDED
 
+#include <cstdlib>
+
 #include <boost/aligned_storage.hpp>
 #include <luabind/config.hpp>
+#include <luabind/detail/class_rep.hpp>
 #include <luabind/detail/instance_holder.hpp>
 #include <luabind/detail/ref.hpp>
 
 namespace luabind { namespace detail
 {
-	class class_rep;
-
 	void finalize(lua_State* L, class_rep* crep);
 
 	// this class is allocated inside lua for each pointer.
@@ -55,8 +56,8 @@ namespace luabind { namespace detail
 		std::pair<void*, int> get_instance(class_id target) const
 		{
 			if (m_instance == 0)
-				return std::pair<void*, int>(nullptr, -1);
-			return m_instance->get(target);
+				return std::pair<void*, int>((void*)0, -1);
+			return m_instance->get(m_classrep->casts(), target);
 		}
 
 		bool is_const() const

@@ -96,21 +96,20 @@
 #include <luabind/detail/constructor.hpp>
 #include <luabind/detail/call.hpp>
 #include <luabind/detail/deduce_signature.hpp>
-#include <luabind/detail/compute_score.hpp>
 #include <luabind/detail/primitives.hpp>
 #include <luabind/detail/property.hpp>
 #include <luabind/detail/typetraits.hpp>
 #include <luabind/detail/class_rep.hpp>
 #include <luabind/detail/call.hpp>
 #include <luabind/detail/object_rep.hpp>
-#include <luabind/detail/calc_arity.hpp>
 #include <luabind/detail/call_member.hpp>
 #include <luabind/detail/enum_maker.hpp>
-#include <luabind/detail/get_signature.hpp>
 #include <luabind/detail/operator_id.hpp>
 #include <luabind/detail/pointee_typeid.hpp>
 #include <luabind/detail/link_compatibility.hpp>
 #include <luabind/detail/inheritance.hpp>
+#include <luabind/detail/signature_match.hpp>
+#include <luabind/no_dependency.hpp>
 #include <luabind/typeid.hpp>
 
 // to remove the 'this' used in initialization list-warning
@@ -375,10 +374,24 @@ namespace luabind
             >
         {};
 
+        template <class T>
+        struct reference_argument
+          : mpl::if_<
+                mpl::or_<boost::is_pointer<T>, is_primitive<T> >
+              , T
+              , typename boost::add_reference<
+                    typename boost::add_const<T>::type
+                >::type
+            >
+        {};
+
         template <class T, class Policies>
         struct inject_dependency_policy
           : mpl::if_<
-                is_primitive<T>
+                mpl::or_<
+                    is_primitive<T>
+                  , has_policy<Policies, detail::no_dependency_policy>
+                >
               , Policies
               , policy_cons<dependency_policy<0, 1>, Policies>
             >
@@ -448,10 +461,12 @@ namespace luabind
             template <class T, class D>
             object make_set(lua_State* L, D T::* mem_ptr, mpl::true_) const
             {
+                typedef typename reference_argument<D>::type argument_type;
+
                 return make_function(
                     L
                   , access_member_ptr<T, D>(mem_ptr)
-                  , mpl::vector3<void, Class&, D const&>()
+                  , mpl::vector3<void, Class&, argument_type>()
                   , set_policies
                 );
             }
@@ -574,7 +589,7 @@ namespace luabind
 			return this->virtual_def(
 				name, f, detail::null_type()
 			  , detail::null_type(), boost::mpl::true_());
-		}
+        }
 
 		// virtual functions
 		template<class F, class DefaultOrPolicies>
@@ -592,7 +607,57 @@ namespace luabind
 			return this->virtual_def(
 				name, fn, default_
 			  , policies, boost::mpl::false_());
-		}
+        }
+
+        template<class F>
+        class_& defaultGet(F f)
+        {
+            return this->virtual_def(
+                "__index", f, detail::null_type()
+                , detail::null_type(), boost::mpl::true_());
+        }
+
+        // virtual functions
+        template<class F, class DefaultOrPolicies>
+        class_& defaultGet(F fn, DefaultOrPolicies default_or_policies)
+        {
+            return this->virtual_def(
+                "__index", fn, default_or_policies, detail::null_type()
+                , LUABIND_MSVC_TYPENAME detail::is_policy_cons<DefaultOrPolicies>::type());
+        }
+
+        template<class F, class Default, class Policies>
+        class_& defaultGet(F fn, Default default_, Policies const& policies)
+        {
+            return this->virtual_def(
+                "__index", fn, default_
+                , policies, boost::mpl::false_());
+        }
+
+        template<class F>
+        class_& defaultSet(F f)
+        {
+            return this->virtual_def(
+                "__newindex", f, detail::null_type()
+                , detail::null_type(), boost::mpl::true_());
+        }
+
+        // virtual functions
+        template<class F, class DefaultOrPolicies>
+        class_& defaultSet(F fn, DefaultOrPolicies default_or_policies)
+        {
+            return this->virtual_def(
+                "__newindex", fn, default_or_policies, detail::null_type()
+                , LUABIND_MSVC_TYPENAME detail::is_policy_cons<DefaultOrPolicies>::type());
+        }
+
+        template<class F, class Default, class Policies>
+        class_& defaultSet(F fn, Default default_, Policies const& policies)
+        {
+            return this->virtual_def(
+                "__newindex", fn, default_
+                , policies, boost::mpl::false_());
+        }
 
 		template<BOOST_PP_ENUM_PARAMS(LUABIND_MAX_ARITY, class A)>
 		class_& def(constructor<BOOST_PP_ENUM_PARAMS(LUABIND_MAX_ARITY, A)> sig)

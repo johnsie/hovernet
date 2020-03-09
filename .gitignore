@@ -328,3 +328,4 @@
 # /updater/
 /updater/Debug
 /updater/Release
+/.vs

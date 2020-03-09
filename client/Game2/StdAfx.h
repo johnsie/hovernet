@@ -13,7 +13,7 @@
 #	define _SCL_SECURE_NO_DEPRECATE
 
 #	include <windows.h>
-#	include <typeinfo.h>
+#	include <typeinfo>
 #	include <commctrl.h>
 
 #	pragma warning(disable: 4251)
