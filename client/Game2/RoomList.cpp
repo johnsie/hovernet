@@ -73,7 +73,7 @@ void RoomList::LoadFromUrl(const std::string &url, Net::CancelFlagPtr cancelFlag
 void RoomList::LoadFromStream(std::istream &in)
 {
 	std::string ris;
-
+			
 	std::getline(in, ris);
 	if (ris != "SERVER LIST") throw Net::NetExn("Invalid format: Missing preamble");
 
