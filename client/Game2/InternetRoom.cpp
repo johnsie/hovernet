@@ -479,7 +479,7 @@ BOOL InternetRoom::AddUserOp(HWND pParentWindow)
 		while((lData != NULL) && strncmp(lData, "SUCCESS", 7)) {
 			lData = GetNextLine(lData);
 		}
-		if(lData == NULL) {
+	if(lData == NULL) {
 			ASSERT(FALSE);
 			lReturnValue = FALSE;
 		}
@@ -492,7 +492,7 @@ BOOL InternetRoom::AddUserOp(HWND pParentWindow)
 			AddChatLine(_("Welcome to the HoverRace Internet Meeting Room"));
 
 			ParseState(lData);
-		}
+	}
 	}
 
 	mOpRequest.Clear();
