@@ -1,7 +1,7 @@
 HoverRace
 =========
 
-<http://www.hoverrace.com/>
+<http://www.hoverrace.org/>
 
 HoverRace is an online racing game originally written by Grokksoft in the mid-1990s. After Grokksoft stopped maintaining the game in the late 1990s, HoverRace was abandonware for a number of years before the original developer, Richard Langlois, opened up the source code to the public. Since then, development has been ongoing to bring HoverRace into the 21st century.
 
@@ -20,13 +20,15 @@ HoverRace currently runs on Windows, but the code is slowly being rewritten to b
 Links
 -----
 
-Download and play the latest release: <http://www.hoverrace.com/>
+Download and play the latest release: <http://www.hoverrace.org/>
 
-Project hosted at GitHub: <https://github.com/HoverRace/HoverRace/>
+Project hosted at GitHub: <https://github.com/johnsie/HoverNet/>
 
-Source documentation: <http://hoverrace.github.com/API/>
+Current Souce documentation <https://github.com/johnsie/HoverNet/wiki>
 
-HoverRace wiki: <https://github.com/HoverRace/HoverRace/wiki>
+Old Source documentation: <http://hoverrace.github.com/API/>
+
+Old HoverRace wiki: <https://github.com/HoverRace/HoverRace/wiki>
 
 
 Compilation Instructions
@@ -72,4 +74,7 @@ Now you've set up the Boost Libraries in both the Debug and Release versions
 
 HoverRace should be ready to compile. Any issues or queries please get in touch. Happy Coding!!!
 
-
+Missing DLLs after compile?
+---------------------
+Try looking in the /libs forlder in the source files if ois or opendl32 files are missing
+If MS dlls are missing you need need to download the appropriate VC++ Runtimes from Microsoft. Google how to get them as this may change depending on where we go with this project or what type of computer you have.
