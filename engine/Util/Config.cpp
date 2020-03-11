@@ -75,7 +75,7 @@ namespace fs = boost::filesystem;
 #define PREREL_CONFIG_FILENAME	"config-testing.yml"
 
 #define DEFAULT_NICKNAME		"Player"
-#define DEFAULT_MAIN_SERVER		"www.hoverrace.org/imr/rl.php"
+#define DEFAULT_MAIN_SERVER		"www.hoverrace.org/imr/roomlist2.php"
 #define DEFAULT_UPDATE_SERVER	"www.hoverrace.org/updates/updates.php"
 #define OLD_MAIN_SERVER			"66.197.183.245/~sirbrock/imr/rl.php"
 
