@@ -646,7 +646,7 @@ void NetworkSession::WriteNet()
 	}
 	else if(mainCharacter[0] != NULL) { // it has already been broadcast
 		BroadcastMainElementState(mainCharacter[0]->GetNetState()); // send state
-
+		
 		if(mSendedPlayerStats != -1) { // send statistics if necessary
 			if(mainCharacter[0]->GetLap() >= mSendedPlayerStats) {
 				if(mainCharacter[0]->HasFinish()) { // race is finished
@@ -1177,7 +1177,7 @@ void NetworkSession::BroadcastMainElementState(const Model::ElementNetState &pSt
 		TRACE("lNbEligible:%d %d\n", lNbEligible, lMaxSend);
 
 		for(int lNbToSend = min(lNbEligible, lMaxSend); lNbToSend > 0; lNbToSend--) {
-			// Find the highest priority element
+			// Find the highñ8est priority element
 			int lBestPriority = lPriorityLevel[0];
 			int lSelectedClient = 0;
 

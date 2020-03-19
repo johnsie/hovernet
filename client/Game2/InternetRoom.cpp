@@ -1234,10 +1234,12 @@ BOOL CALLBACK InternetRoom::RoomCallBack(HWND pWindow, UINT pMsgId, WPARAM pWPar
 			{
 				// i18n
 				// so we don't need to have things translated multiple times
-				std::string title = boost::str(boost::format("%s %s") %
-					PACKAGE_NAME %
-					_("Internet Meeting Room"));
+			//	std::string title = boost::str(boost::format("%s %s") %
+		//			PACKAGE_NAME %
+			//		_("Internet Meeting Room"));
 				
+			std::string title = "Internet Meeting Room";
+
 				SetWindowTextW(pWindow, Str::UW(title.c_str()));
 				SetDlgItemTextW(pWindow, IDC_GAME_LIST_C, Str::UW(_("Game list")));
 				SetDlgItemTextW(pWindow, IDC_USERS_LIST_C, Str::UW(_("User list")));

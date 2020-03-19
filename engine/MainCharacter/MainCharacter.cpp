@@ -382,12 +382,12 @@ void MainCharacter::SetNetState(int /*pDataLen */ , const MR_UInt8 *pData)
 	// Determine cabin orientation
 	if(mControlState & eBreakDirection)
 		mCabinOrientation = MR_NORMALIZE_ANGLE(RAD_2_MR_ANGLE(atan2(mYSpeed, mXSpeed)) + MR_PI);
-	//else if( (mControlState & eStraffleRight)^(mControlState & eStraffleLeft)) {
-	//      if(mControlState & eStraffleRight)
-	//              mCabinOrientation = MR_NORMALIZE_ANGLE(mOrientation - MR_PI / 2);
-	//      else
-	//              mCabinOrientation = MR_NORMALIZE_ANGLE(mOrientation + MR_PI / 2);
-	//}
+	else if( (mControlState & eStraffleRight)^(mControlState & eStraffleLeft)) {
+	      if(mControlState & eStraffleRight)
+	              mCabinOrientation = MR_NORMALIZE_ANGLE(mOrientation - MR_PI / 2);
+	      else
+	              mCabinOrientation = MR_NORMALIZE_ANGLE(mOrientation + MR_PI / 2);
+	}
 }
 
 void MainCharacter::SetNbLapForRace(int pNbLap)
@@ -513,16 +513,24 @@ int MainCharacter::Simulate(MR_SimulationTime pDuration, Model::Level *pLevel, i
 	if(mMotorDisplay < 0)
 		mMotorDisplay = 0;
 
+
+	/*Some twonk messed around with the brake function
+	//This messed  with king of the hill on Steeplechase, which is not cool
+	//JM putting it back to the old way
 	// Orient the cabin if a special move have been made
 	if(mControlState & eBreakDirection) {
 		double lAbsoluteSpeed = sqrt(mXSpeed * mXSpeed + mYSpeed * mYSpeed);
-		if(lAbsoluteSpeed > (eSteadySpeed[mHoverModel] / 20.0))
-			mCabinOrientation = MR_NORMALIZE_ANGLE(RAD_2_MR_ANGLE(atan2(mYSpeed, mXSpeed)) + MR_PI);
-	}
+		if (lAbsoluteSpeed > (eSteadySpeed[mHoverModel] / 20.0))
+		{
+				mCabinOrientation = MR_NORMALIZE_ANGLE(RAD_2_MR_ANGLE(atan2(mYSpeed, mXSpeed)) + MR_PI);
+		}
+		}
 	else if(mControlState & eLookBack) {
 		if(mCabinOrientation - mOrientation < (MR_PI / 2))
 			mOrientation = MR_NORMALIZE_ANGLE(mCabinOrientation - MR_PI);
 	}
+
+	//This little bit was commented out for some reason but the other non comented parts weren't
 	//else if((mControlState & eStraffleRight) ^ (mControlState & eStraffleLeft)) {
 	//      if(mControlState & eStraffleRight)
 	//              mCabinOrientation = MR_NORMALIZE_ANGLE(mOrientation - MR_PI / 2);
@@ -531,6 +539,45 @@ int MainCharacter::Simulate(MR_SimulationTime pDuration, Model::Level *pLevel, i
 	//}
 	else
 		mCabinOrientation = mOrientation;
+
+
+
+
+		*/
+
+
+
+
+
+
+	if (mControlState & eBreakDirection)
+	{
+		double lAbsoluteSpeed = sqrt(mXSpeed * mXSpeed + mYSpeed * mYSpeed);
+
+		if (lAbsoluteSpeed > (eSteadySpeed[mHoverModel] / 20.0))
+		{
+			mCabinOrientation = MR_NORMALIZE_ANGLE(RAD_2_MR_ANGLE(atan2(mYSpeed, mXSpeed)) + MR_PI);
+		}
+	}
+	else if ((mControlState & eStraffleRight) ^ (mControlState & eStraffleLeft))
+	{
+		if (mControlState & eStraffleRight)
+		{
+			mCabinOrientation = MR_NORMALIZE_ANGLE(mOrientation - MR_PI / 2);
+		}
+		else
+		{
+			mCabinOrientation = MR_NORMALIZE_ANGLE(mOrientation + MR_PI / 2);
+		}
+	}
+	else
+	{
+		mCabinOrientation = mOrientation;
+	}
+
+
+
+
 
 	if(mMasterMode) {
 		MR_SimulationTime lDuration = pDuration;

@@ -895,7 +895,7 @@ BOOL CALLBACK NetworkInterface::WaitGameNameCallBack(HWND pWindow, UINT pMsgId, 
 	
 					ASSERT(lCode != SOCKET_ERROR);
 	
-					// next instance of this function will be with the MRM_SERVER_CONNECT message
+					// next instance of this ñ2function will be with the MRM_SERVER_CONNECT message
 					connect(sNewSocket, (struct sockaddr *) &lAddr, sizeof(lAddr));
 				}
 			}
