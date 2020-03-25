@@ -576,6 +576,45 @@ void GameApp::DisplayPrefs()
 	}
 }
 
+
+/**
+ * Returns the local IP in a string.
+ */
+std::string GetLocalAddrStr()
+{
+	std::string lReturnValue;
+
+	char lHostname[100];
+	HOSTENT* lHostEnt;
+	int lAdapter = 0;
+
+	gethostname(lHostname, sizeof(lHostname));
+
+	lReturnValue = lHostname;
+
+	lHostEnt = gethostbyname(lHostname);
+
+	if (lHostEnt != NULL) {
+		while (lHostEnt->h_addr_list[lAdapter] != NULL) {
+			const unsigned char* lHostAddr = (const unsigned char*)lHostEnt->h_addr_list[lAdapter];
+			lAdapter++;
+
+			sprintf(lHostname, "  %d.%d.%d.%d", lHostAddr[0], lHostAddr[1], lHostAddr[2], lHostAddr[3]);
+
+			lReturnValue += lHostname;
+		}
+	}
+
+	if (lAdapter == 0) {
+		lReturnValue += " (";
+		lReturnValue += _("no network connection");
+		lReturnValue += ")";
+	}
+
+	return lReturnValue;
+}
+
+
 int GameApp::MainLoop()
 {
 	MSG lMessage;
@@ -952,10 +991,33 @@ BOOL GameApp::InitGame()
 	//}
 
 	// show "click OK to play on the internet" dialog
+
 	if(lReturnValue && cfg->misc.displayFirstScreen && initScript.empty()) {
 		if (FirstChoiceDialog().ShowModal(mInstance, mMainWindow))
+		{
+			//test using miniupnp
+			std::string a = "miniupnp\\upnpc-shared.exe ";
+			std::string b = a + GetLocalAddrStr();
+			std::string c = b + " 9530 9530 TCP";
+			LPCSTR lpMyTCPString = c.c_str();
+			ShellExecute(NULL, "open", lpMyTCPString, NULL, NULL, SW_SHOWDEFAULT);
+
+			std::string s = "miniupnp\\upnpc-shared.exe ";
+			std::string t = s + GetLocalAddrStr();
+			std::string u = t + " 9531 9531 TCP";
+			LPCSTR lpMyOTString = u.c_str();
+			ShellExecute(NULL, "open", lpMyOTString, NULL, NULL, SW_SHOWDEFAULT);
+
+
+			std::string j = "miniupnp\\upnpc-shared.exe ";
+			std::string o = j + GetLocalAddrStr();
+			std::string n = o + " 9531 9531 UDP";
+			LPCSTR lpMyString = n.c_str();
+			ShellExecute(NULL, "open", lpMyString, NULL, NULL, SW_SHOWDEFAULT);
+
 			SendMessage(mMainWindow, WM_COMMAND, ID_GAME_NETWORK_INTERNET, 0);
-	}
+		}
+		}
 
 	return lReturnValue;
 }
@@ -2247,6 +2309,47 @@ void CloseCapture()
 
 	}
 }
+
+
+/**
+ * Returns the local IP in a string.
+ */
+std::string GetLocalAddrStr()
+{
+	std::string lReturnValue;
+
+	char lHostname[100];
+	HOSTENT *lHostEnt;
+	int lAdapter = 0;
+
+	gethostname(lHostname, sizeof(lHostname));
+
+	lReturnValue = lHostname;
+
+	lHostEnt = gethostbyname(lHostname);
+
+	if(lHostEnt != NULL) {
+		while(lHostEnt->h_addr_list[lAdapter] != NULL) {
+			const unsigned char *lHostAddr = (const unsigned char *) lHostEnt->h_addr_list[lAdapter];
+			lAdapter++;
+
+			sprintf(lHostname, "  %d.%d.%d.%d", lHostAddr[0], lHostAddr[1], lHostAddr[2], lHostAddr[3]);
+
+			lReturnValue += lHostname;
+		}
+	}
+
+	if(lAdapter == 0) {
+		lReturnValue += " (";
+		lReturnValue += _("no network connection");
+		lReturnValue += ")";
+	}
+
+	return lReturnValue;
+}
+
+
+
 
 void CaptureScreen(VideoServices::VideoBuffer * pVideoBuffer)
 {

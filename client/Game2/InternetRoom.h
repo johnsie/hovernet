@@ -109,6 +109,14 @@ class InternetRoom
 				std::string mTrack;
 				int mNbLap;
 				BOOL mAllowWeapons;
+				std::string jAllowWeapons;
+				std::string mOptAllowMines;
+				std::string  mOptAllowCans;
+				std::string  mOptAllowBasic;
+				std::string  mOptAllowBi;
+				std::string  mOptAllowCX;
+				std::string mOptAllowEON;
+
 				int mNbClient;
 				int mClientList[eMaxPlayerGame];
 				std::string mIPAddr;

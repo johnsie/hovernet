@@ -402,9 +402,48 @@ int InternetRoom::ParseState(const char *pAnswer)
 
 							int lNbClient;
 							int lDummyBool;
-
-							if(sscanf(lLinePtr, "%u %d %d %d", &mGameList[lEntry].mPort, &mGameList[lEntry].mNbLap, &lDummyBool, &lNbClient) == 4) {
+							string lOptAllowWeapons;
+							string lOptAllowMines;
+							string lOptAllowCans;
+							string lOptAllowBasic;
+							string lOptAllowBi;
+								string lOptAllowCX;
+								string lOptAllowEON;
+							if(sscanf(lLinePtr, "%u %d %d %d %d %d %d %d %d %d %d %d", &mGameList[lEntry].mPort, &mGameList[lEntry].mNbLap, &lDummyBool, &lNbClient, 
+								&lOptAllowWeapons,
+							 &lOptAllowMines,
+							 &lOptAllowCans,
+						 &lOptAllowBasic,
+							 &lOptAllowBi,
+							 &lOptAllowCX,
+							&lOptAllowEON) == 4) {
+							
+								
+								/* just for reference
+								((lGameOpts & OPT_ALLOW_WEAPONS) ? 'W' : '_') %
+									((lGameOpts & OPT_ALLOW_MINES) ? 'M' : '_') %
+									((lGameOpts & OPT_ALLOW_CANS) ? 'C' : '_') %
+									((lGameOpts & OPT_ALLOW_BASIC) ? 'B' : '_') %
+									((lGameOpts & OPT_ALLOW_BI) ? '2' : '_') %
+									((lGameOpts & OPT_ALLOW_CX) ? 'C' : '_') %
+									((lGameOpts & OPT_ALLOW_EON) ? 'E' : '_'));
+									*/
+								
+								//old way
 								mGameList[lEntry].mAllowWeapons = lDummyBool;
+								
+
+								//We are using strings in to set game options
+								//new way
+								mGameList[lEntry].jAllowWeapons = lOptAllowWeapons;
+
+								mGameList[lEntry].mOptAllowMines = lOptAllowMines;
+								mGameList[lEntry].mOptAllowCans = lOptAllowCans;
+								mGameList[lEntry].mOptAllowBasic = lOptAllowBasic;
+								mGameList[lEntry].mOptAllowBi = lOptAllowBi;
+								mGameList[lEntry].mOptAllowCX = lOptAllowCX;
+								mGameList[lEntry].mOptAllowEON = lOptAllowEON;
+
 
 								if(lNbClient > eMaxPlayerGame) {
 									lNbClient = eMaxPlayerGame;
