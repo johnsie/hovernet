@@ -520,19 +520,41 @@ BOOL InternetRoom::DelUserOp(HWND pParentWindow, BOOL pFastMode)
 	return lReturnValue;
 }
 
+
+
+
+
+
 BOOL InternetRoom::AddGameOp(HWND pParentWindow, const char *pGameName, const char *pTrackName, int pNbLap, char pGameOpts, unsigned pPort)
 {
 	BOOL lReturnValue = FALSE;
 
 	mThis = this;
 
+	//std::string s(20,pGameOpts);
+
+
+
+
+
 	mNetOpString = _("Registering game with the Internet Meeting Room...");
 
-	mNetOpRequest = boost::str(boost::format("%s?=ADD_GAME%%%%%d-%u%%%%%s%%%%%s%%%%%d%%%%%d%%%%%d") %
+
+
+	mNetOpRequest = boost::str(boost::format("%s?=ADD_GAME%%%%%d-%u%%%%%s%%%%%s%%%%%d%%%%J%%%%%d%%%%%d%%%%%d%%%%%d%%%%%d%%%%%d%%%%%d%%%%%d") %
 		roomList->GetSelectedRoom()->path %
 		//(const char *) gServerList[gCurrentServerEntry].mURL,
 		mCurrentUserIndex % mCurrentUserId % MR_Pad(pGameName) %
-		MR_Pad(pTrackName) % pNbLap % pGameOpts % pPort);
+		MR_Pad(pTrackName) % pNbLap % 
+	    pPort %
+		((pGameOpts & OPT_ALLOW_WEAPONS) ? 'W' : '_') %
+		((pGameOpts & OPT_ALLOW_MINES) ? 'M' : '_') %
+		((pGameOpts & OPT_ALLOW_CANS) ? 'C' : '_') %
+		((pGameOpts & OPT_ALLOW_BASIC) ? 'B' : '_') %
+		((pGameOpts & OPT_ALLOW_BI) ? '2' : '_') %
+		((pGameOpts & OPT_ALLOW_CX) ? 'C' : '_') %
+		((pGameOpts & OPT_ALLOW_EON) ? 'E' : '_')
+	);
 
 	lReturnValue = DialogBoxW(GetModuleHandle(NULL), MAKEINTRESOURCEW(IDD_NET_PROGRESS), pParentWindow, NetOpCallBack) == IDOK;
 
@@ -1811,6 +1833,7 @@ BOOL CALLBACK InternetRoom::RoomCallBack(HWND pWindow, UINT pMsgId, WPARAM pWPar
 
 						if(lSuccess) {
 							// Register to the InternetServer
+							
 							lSuccess = (mThis->AddGameOp(pWindow,
 								lCurrentTrack.c_str(), lCurrentTrack.c_str(),
 								lNbLap, lGameOpts,
