@@ -378,7 +378,7 @@ int InternetRoom::ParseState(const char *pAnswer)
 					}
 					else if(!strcmp(lOp, "NEW")) {
 						lLinePtr = GetNextLine(lLinePtr);
-
+					//	MessageBox(0, "New", "MessageBox caption", MB_OK);
 						if(lLinePtr != NULL) {
 							lReturnValue |= eGamesModified;
 
@@ -392,8 +392,7 @@ int InternetRoom::ParseState(const char *pAnswer)
 
 							lLinePtr = GetNextLine(lLinePtr);
 							mGameList[lEntry].mTrack = GetLine(lLinePtr);
-							mGameList[lEntry].mAvailCode =
-								Config::GetInstance()->GetTrackBundle()->CheckAvail(mGameList[lEntry].mTrack.c_str());
+							mGameList[lEntry].mAvailCode = Config::GetInstance()->GetTrackBundle()->CheckAvail(mGameList[lEntry].mTrack.c_str());
 
 							lLinePtr = GetNextLine(lLinePtr);
 							mGameList[lEntry].mIPAddr = GetLine(lLinePtr);

@@ -590,7 +590,7 @@ std::string GetLocalAddrStr()
 
 	gethostname(lHostname, sizeof(lHostname));
 
-	lReturnValue = lHostname;
+//	lReturnValue = lHostname;
 
 	lHostEnt = gethostbyname(lHostname);
 
@@ -996,24 +996,34 @@ BOOL GameApp::InitGame()
 		if (FirstChoiceDialog().ShowModal(mInstance, mMainWindow))
 		{
 			//test using miniupnp
-			std::string a = "miniupnp\\upnpc-shared.exe ";
-			std::string b = a + GetLocalAddrStr();
-			std::string c = b + " 9530 9530 TCP";
+			
+
+			
+
+			char buf[256];
+			GetCurrentDirectoryA(256, buf);
+			std::string thisDir = std::string(buf) + '\\';
+
+			std::string strMiniUPNPLocation =thisDir +"miniupnp\\upnpc-shared.exe";
+			LPCSTR fcMiniUPNPLocation = strMiniUPNPLocation.c_str();
+			std::string c = " -a " + GetLocalAddrStr() + " 9530 9530 TCP";
 			LPCSTR lpMyTCPString = c.c_str();
-			ShellExecute(NULL, "open", lpMyTCPString, NULL, NULL, SW_SHOWDEFAULT);
+	       
+			
+			ShellExecute(NULL, "open", fcMiniUPNPLocation,lpMyTCPString,NULL,0);
+		
+			//MessageBox::Show("Any text here"+ GetLocalAddrStr());
+		//	MessageBox(0, lpMyTCPString, "MessageBox caption", MB_OK);
 
-			std::string s = "miniupnp\\upnpc-shared.exe ";
-			std::string t = s + GetLocalAddrStr();
-			std::string u = t + " 9531 9531 TCP";
+			std::string u = " -a " + GetLocalAddrStr() + " 9531 9531 TCP";
 			LPCSTR lpMyOTString = u.c_str();
-			ShellExecute(NULL, "open", lpMyOTString, NULL, NULL, SW_SHOWDEFAULT);
+			ShellExecute(NULL, "open", fcMiniUPNPLocation,lpMyOTString, NULL, 0);
 
 
-			std::string j = "miniupnp\\upnpc-shared.exe ";
-			std::string o = j + GetLocalAddrStr();
-			std::string n = o + " 9531 9531 UDP";
-			LPCSTR lpMyString = n.c_str();
-			ShellExecute(NULL, "open", lpMyString, NULL, NULL, SW_SHOWDEFAULT);
+		
+			std::string n  = " -a " + GetLocalAddrStr() + " 9531 9531 UDP";
+			LPCSTR lpMyUDPString = n.c_str();
+			ShellExecute(NULL, "open", fcMiniUPNPLocation, lpMyUDPString, NULL, 0);
 
 			SendMessage(mMainWindow, WM_COMMAND, ID_GAME_NETWORK_INTERNET, 0);
 		}
@@ -2324,7 +2334,7 @@ std::string GetLocalAddrStr()
 
 	gethostname(lHostname, sizeof(lHostname));
 
-	lReturnValue = lHostname;
+	//lReturnValue = lHostname;
 
 	lHostEnt = gethostbyname(lHostname);
 
