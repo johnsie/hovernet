@@ -415,7 +415,7 @@ int InternetRoom::ParseState(const char *pAnswer)
 						 &lOptAllowBasic,
 							 &lOptAllowBi,
 							 &lOptAllowCX,
-							&lOptAllowEON) == 4) {
+							&lOptAllowEON) == 11) {
 							
 								
 								/* just for reference
@@ -880,7 +880,7 @@ void InternetRoom::RefreshGameSelection(HWND pWindow)
 				break;
 
 			case eTrackNotFound:
-				lAvailString = _("Join game to download from hoverrace.com");
+				lAvailString = _("Join game to download from hoverrace.org");
 				break;
 		}
 
@@ -921,6 +921,9 @@ void InternetRoom::RefreshGameList(HWND pWindow)
 		// Refill
 		int lIndex = 0;
 		for(int lCounter = 0; lCounter < eMaxGame; lCounter++) {
+	
+			
+			MessageBox(0, "GL", "MessageBox caption", MB_OK);
 			if(mGameList[lCounter].mValid) {
 				LV_ITEM lItem;
 
