@@ -923,7 +923,7 @@ void InternetRoom::RefreshGameList(HWND pWindow)
 		for(int lCounter = 0; lCounter < eMaxGame; lCounter++) {
 	
 			
-			MessageBox(0, "GL", "MessageBox caption", MB_OK);
+		//	MessageBox(0, "GL", "MessageBox caption", MB_OK);
 			if(mGameList[lCounter].mValid) {
 				LV_ITEM lItem;
 

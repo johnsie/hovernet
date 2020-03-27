@@ -1449,7 +1449,7 @@ void NetworkSession::AddResultEntry(int pPlayerIndex, MR_SimulationTime pFinishT
  */
 void NetworkSession::AddMessageKey(char pKey)
 {
-	boost::lock_guard<boost::mutex> lock(chatMutex);
+//	boost::lock_guard<boost::mutex> lock(chatMutex);
 
 	int lStrLen = strlen(mChatEditBuffer);
 
