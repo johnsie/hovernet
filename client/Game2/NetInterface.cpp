@@ -61,6 +61,8 @@ namespace HoverRace {
 namespace Client {
 
 // Local prototypes
+
+//Get the ip address
 static std::string GetLocalAddrStr();
 static MR_UInt32 GetAddrFromStr(const char *pName);
 
@@ -352,6 +354,14 @@ BOOL NetworkInterface::UDPSend(int pClient, NetMessageBuffer *pMessage, BOOL pLo
 {
 	ASSERT((pClient >= 0) && (pClient < eMaxClient));
 	pMessage->mClient = mId;
+	
+	
+	//JM 
+	//This is where we will send the message to the server. The server can decide who to broadcast the message to
+	//Run in shadow mode for now so that we can investigate the data being sent
+	
+	//I think the function below is what sends the data. It's in the networkport class further down this file
+	
 	return mClient[pClient].UDPSend(pLongPort ? mUDPOutLongPort : mUDPOutShortPort, pMessage, pLongPort ? 0 : 1, pResendLast);
 }
 
@@ -364,6 +374,16 @@ BOOL NetworkInterface::UDPSend(int pClient, NetMessageBuffer *pMessage, BOOL pLo
 BOOL NetworkInterface::BroadcastMessage(NetMessageBuffer *pMessage, int pReqLevel)
 {
 	pMessage->mClient = mId; // must ensure this
+	
+	
+	//JM
+	//Let's just send the data to the server. It can work out what to do.
+	
+	
+	
+	
+	//Below runs a for loop to send the data to every client. That will eventually get replaced with lines above which send data to the central server instead of clients.
+	
 	for(int lCounter = 0; lCounter < eMaxClient; lCounter++) {
 		if(pReqLevel == MR_NET_DATAGRAM)
 			mClient[lCounter].UDPSend(mUDPOutLongPort, pMessage, 0, FALSE);
@@ -404,6 +424,15 @@ BOOL NetworkInterface::BroadcastMessage( DWORD  pTimeStamp, int  pMessageType, i
 BOOL NetworkInterface::FetchMessage(DWORD &pTimeStamp, int &pMessageType, int &pMessageLen, const MR_UInt8 *&pMessage, int &pClientId)
 {
 	BOOL lReturnValue = FALSE;
+//JM
+//Right... This function returns a bool, but it also populates the values 
+//So for our code to work we are going to need  to have these values handy
+//The original code below is using the 'poll' fuction to poll each client... but we can either poll our server or get something that has already been received from the server
+
+
+
+
+
 	static int sLastClient = 0;
 
 	for(int lCounter = 0; !lReturnValue && (lCounter < eMaxClient); lCounter++) {
@@ -635,6 +664,9 @@ BOOL NetworkInterface::SlavePreConnect(HWND pWindow, std::string &pGameName)
  */
 BOOL NetworkInterface::SlaveConnect(HWND pWindow, const char *pServerIP, unsigned pDefaultPort, const char *pGameName, HWND *pModalessDlg, int pReturnMessage)
 {
+
+//JM I think we're all going to be slaves
+
 	ASSERT(!mServerMode);
 
 	BOOL lReturnValue = TRUE;
@@ -645,10 +677,18 @@ BOOL NetworkInterface::SlaveConnect(HWND pWindow, const char *pServerIP, unsigne
 		mGameName = pGameName;
 	}
 
+//JM
+//if there is a server ip 
 	if(pServerIP != NULL) {
 		Disconnect();
+		//Assert that we're not in server mode
 		ASSERT(!mServerMode);
-
+        
+		//JM
+		//This is the bit where we will connect to the central server
+		
+		//We're going to be shadowing to collect data, so keep the part below that connection to the old 9530 oirt
+		
 		mRegistrySocket = socket(PF_INET, SOCK_STREAM, 0);
 
 		if(mRegistrySocket == INVALID_SOCKET) {
@@ -895,7 +935,7 @@ BOOL CALLBACK NetworkInterface::WaitGameNameCallBack(HWND pWindow, UINT pMsgId, 
 	
 					ASSERT(lCode != SOCKET_ERROR);
 	
-					// next instance of this ñ2function will be with the MRM_SERVER_CONNECT message
+					// next instance of this Ã±2function will be with the MRM_SERVER_CONNECT message
 					connect(sNewSocket, (struct sockaddr *) &lAddr, sizeof(lAddr));
 				}
 			}
@@ -2195,6 +2235,10 @@ BOOL NetworkPort::UDPSend(SOCKET pSocket, NetMessageBuffer *pMessage, unsigned p
 {
 	BOOL lReturnValue = TRUE;
 
+
+//This is the function that actually sends the data to a client (or in future it will be the server)
+
+
 	// Debug lost packet simulation
 	/*
 	   if( (rand()%3) != 1 )
@@ -2202,6 +2246,12 @@ BOOL NetworkPort::UDPSend(SOCKET pSocket, NetMessageBuffer *pMessage, unsigned p
 	   return TRUE;
 	   }
 	 */
+	 
+	 //JM
+	 //The new way
+	 //We're going to use asio to send this message to the server. I think I will try with TCP for now.
+	 
+	 //The old way. This old way will send data directly to a client over udp
 
 	if(mUDPRecvSocket != INVALID_SOCKET) {
 		int lToSend = MR_NET_HEADER_LEN + pMessage->mDataLen;
