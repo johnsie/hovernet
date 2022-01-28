@@ -21,8 +21,14 @@
 
 #include "StdAfx.h"
 
+//need this stuff for the new networking stuff
+#include <iostream>
+#include <olc_net.h>
+
+
 #include <Mmsystem.h>
 
+//Keep the old networking parts in for now
 #include "NetInterface.h"
 #include "resource.h"
 #include "../../engine/Util/OS.h"
