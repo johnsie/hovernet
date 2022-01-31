@@ -22,7 +22,7 @@
 #include "StdAfx.h"
 
 #include <richedit.h>
-
+ 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
@@ -1031,7 +1031,7 @@ void InternetRoom::PlayMessageReceivedSound(HWND wnd) {
 }
 
 BOOL InternetRoom::VerifyError(HWND pParentWindow, const char *pAnswer)
-{
+{ 
 	BOOL lReturnValue = FALSE;
 	int lCode = -1;
 

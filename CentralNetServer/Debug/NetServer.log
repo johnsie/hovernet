@@ -1,0 +1,6 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (NetServer.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  CentralServer.cpp
+  class template optional is only available with C++17 or later.
+C:\Users\john.mccourt\source\repos\johnsie\HoverNet\CentralNetServer\CentralServer.cpp(70,29): warning C4305: 'argument': truncation from 'int' to 'uint16_t'
+C:\Users\john.mccourt\source\repos\johnsie\HoverNet\CentralNetServer\CentralServer.cpp(70,22): warning C4309: 'argument': truncation of constant value
+  NetServer.vcxproj -> C:\Users\john.mccourt\source\repos\johnsie\HoverNet\Debug\CentralNetServer.exe

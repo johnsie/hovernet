@@ -1,0 +1,5 @@
+﻿  NetServer.cpp
+C:\Users\john.mccourt\source\repos\johnsie\HoverNet\CentralNetServer2\NetServer.cpp(25,30): warning C4305: '=': truncation from 'int' to 'u_short'
+C:\Users\john.mccourt\source\repos\johnsie\HoverNet\CentralNetServer2\NetServer.cpp(25,24): warning C4309: '=': truncation of constant value
+C:\Users\john.mccourt\source\repos\johnsie\HoverNet\CentralNetServer2\NetServer.cpp(11,14): warning C4101: 'mUDPRemoteAddr': unreferenced local variable
+  CentralNetServer2.vcxproj -> C:\Users\john.mccourt\source\repos\johnsie\HoverNet\Debug\CentralNetServer2.exe

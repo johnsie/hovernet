@@ -46,7 +46,7 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HRace</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>c:\local\boost_1_72_0;$(IncludePath)</IncludePath>
+    <IncludePath>c:\local\boost_1_72_0;$(IncludePath);C:\sdk\asio-1.20.0\include;</IncludePath>
     <LibraryPath>c:\local\boost_1_72_0\lib32-msvc-14.2;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -110,6 +110,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game2\AboutDialog.cpp" />
+    <ClCompile Include="Game2\CentralisedNetInterface.cpp" />
+    <ClCompile Include="Game2\CentralisedNetworkSession.cpp" />
     <ClCompile Include="Game2\FolderViewer.cpp" />
     <ClCompile Include="Game2\GifDecoder.cpp" />
     <ClCompile Include="Game2\CheckRoomListDialog.cpp" />
@@ -160,7 +162,10 @@
     <ClCompile Include="Game2\HoverScript\SysEnv.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CentralisedNetInterface.h" />
     <ClInclude Include="Game2\AboutDialog.h" />
+    <ClInclude Include="Game2\CentralisedNetInterface.h" />
+    <ClInclude Include="Game2\CentralisedNetworkSession.h" />
     <ClInclude Include="Game2\FolderViewer.h" />
     <ClInclude Include="Game2\GifDecoder.h" />
     <ClInclude Include="Game2\CheckRoomListDialog.h" />

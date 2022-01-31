@@ -19,6 +19,8 @@
 // and limitations under the License.
 //
 
+
+
 #include "StdAfx.h"
 
 #include <sstream>
@@ -38,6 +40,7 @@
 #include "FirstChoiceDialog.h"
 #include "FullscreenTest.h"
 #include "resource.h"
+#include "CentralisedNetworkSession.h"
 #include "NetworkSession.h"
 #include "PrefsDialog.h"
 #include "HighObserver.h"
@@ -93,6 +96,8 @@ void CaptureScreen( VideoServices::VideoBuffer* pVideoBuffer );
 #define ID_GAME_SPLITSCREEN             40003
 #define ID_GAME_SPLITSCREEN3            40192
 #define ID_GAME_SPLITSCREEN4            40193
+
+#define ID_GAME_CENTRALISED_NETWORK_CONNECT         40004
 #define ID_GAME_NETWORK_CONNECT         40005
 #define ID_GAME_NETWORK_SERVER          40006
 #define ID_GAME_NETWORK_INTERNET        40008
@@ -779,6 +784,11 @@ bool GameApp::CreateMainMenu()
 
 	HMENU netMenu = CreatePopupMenu();
 	if (netMenu == NULL) return false;
+
+	//Added connect to Centralised Server
+	if (!AppendMenuW(netMenu, MF_STRING, ID_GAME_CENTRALISED_NETWORK_CONNECT,
+		Str::UW(MENUFMT("Menu|File|Network", "&Connect to Central server", true, NULL).c_str()))) return false;
+
 	if (!AppendMenuW(netMenu, MF_STRING, ID_GAME_NETWORK_CONNECT,
 		Str::UW(MENUFMT("Menu|File|Network", "&Connect to server", true, NULL).c_str()))) return false;
 	if (!AppendMenuW(netMenu, MF_STRING, ID_GAME_NETWORK_SERVER,
@@ -1451,6 +1461,221 @@ void GameApp::NewSplitSession(int pSplitPlayers)
 	AssignPalette();
 }
 
+
+
+
+
+
+
+
+void GameApp::NewCentralisedNetworkSession(BOOL pServer)
+{
+	bool lSuccess = true;
+	CentralisedNetworkSession* lCurrentSession = NULL;
+	Config* cfg = Config::GetInstance();
+
+	// Verify is user acknowledge
+	if (AskUserToAbortGame() != IDOK)
+		return;
+
+	// Delete the current session
+	Clean();
+
+	std::string lCurrentTrack;
+	int lNbLap;
+	char lGameOpts;
+	// Prompt the user for a maze name fbm extensions
+
+	if (pServer) {
+		RulebookPtr rules = TrackSelectDialog().ShowModal(mInstance, mMainWindow);
+		if ((lSuccess = (rules.get() != NULL))) {
+			lCurrentTrack = rules->GetTrackName();
+			lNbLap = rules->GetLaps();
+			lGameOpts = rules->GetGameOpts();
+		}
+
+		DeleteMovieWnd();
+		SOUNDSERVER_INIT(mMainWindow);
+		lCurrentSession = new CentralisedNetworkSession(FALSE, -1, -1, mMainWindow);
+	}
+	else {
+		DeleteMovieWnd();
+		SOUNDSERVER_INIT(mMainWindow);
+
+		lCurrentSession = new CentralisedNetworkSession(FALSE, -1, -1, mMainWindow);
+		lCurrentSession->SetPlayerName(cfg->player.nickName.c_str());
+
+		std::string lTrack;
+		lSuccess = (lCurrentSession->PreConnectToServer(mMainWindow, lTrack) != FALSE);
+		lCurrentTrack = lTrack.c_str();
+
+		if (cfg->player.nickName != lCurrentSession->GetPlayerName()) {
+			cfg->player.nickName = lCurrentSession->GetPlayerName();
+			cfg->Save();
+		}
+		// Extract the lap count from the track name and gameplay options
+		// From the end of the string find the two last space
+		int lSpaceCount = 0;
+
+		lNbLap = 5;								  // Default
+		lGameOpts = 0;
+
+		for (int lCounter = lCurrentTrack.length() - 1; lCounter >= 0; lCounter--) {
+			if (lCurrentTrack[lCounter] == ' ') {
+				lSpaceCount++;
+
+				if (lSpaceCount == 1) {
+					/* extract crafts allowed */
+					lGameOpts |= ((lCurrentTrack.c_str())[lCounter + 1] == 'B') ? OPT_ALLOW_BASIC : 0;
+					lGameOpts |= ((lCurrentTrack.c_str())[lCounter + 2] == '2') ? OPT_ALLOW_BI : 0;
+					lGameOpts |= ((lCurrentTrack.c_str())[lCounter + 3] == 'C') ? OPT_ALLOW_CX : 0;
+					lGameOpts |= ((lCurrentTrack.c_str())[lCounter + 4] == 'E') ? OPT_ALLOW_EON : 0;
+				}
+
+				if (lSpaceCount == 2) {
+					/* extract game options */
+					lGameOpts |= ((lCurrentTrack.c_str())[lCounter + 1] == 'W') ? OPT_ALLOW_WEAPONS : 0;
+					lGameOpts |= ((lCurrentTrack.c_str())[lCounter + 2] == 'M') ? OPT_ALLOW_MINES : 0;
+					lGameOpts |= ((lCurrentTrack.c_str())[lCounter + 3] == 'C') ? OPT_ALLOW_CANS : 0;
+				}
+
+				if (lSpaceCount == 5) {
+					lNbLap = atoi(lCurrentTrack.c_str() + lCounter + 1);
+
+					if (lNbLap < 1)
+						lNbLap = 5;
+
+					lCurrentTrack.resize(lCounter);
+					break;
+				}
+			}
+		}
+	}
+
+	Model::TrackPtr track;
+	if (lSuccess) {
+		observers[0] = Observer::New();
+		highObserver = new HighObserver();
+
+		try {
+			track = Config::GetInstance()->
+				GetTrackBundle()->OpenTrack(lCurrentTrack.c_str());
+		}
+		catch (Parcel::ObjStreamExn&) {
+			// Ignore -- force a re-download.
+		}
+		if (track.get() == NULL) {
+			try {
+				OutputDebugString("Track not found; downloading: ");
+				OutputDebugString(lCurrentTrack.c_str());
+				OutputDebugString("\n");
+
+				lSuccess = TrackDownloadDialog(lCurrentTrack).ShowModal(mInstance, mMainWindow);
+				if (lSuccess) {
+					Model::TrackPtr track = Config::GetInstance()->
+						GetTrackBundle()->OpenTrack(lCurrentTrack.c_str());
+					if (track.get() == NULL) {
+						throw Parcel::ObjStreamExn("Track failed to download.");
+					}
+				}
+			}
+			catch (Parcel::ObjStreamExn & ex) {
+				TrackOpenFailMessageBox(mMainWindow, lCurrentTrack, ex.what());
+				lSuccess = false;
+			}
+		}
+	}
+
+	if (lSuccess) {
+		lSuccess = (lCurrentSession->LoadNew(
+			lCurrentTrack.c_str(), track->GetRecordFile(),
+			lNbLap, lGameOpts, mVideoBuffer) != FALSE);
+	}
+
+	if (lSuccess) {
+		if (pServer) {
+			/*CRUFT
+			lNameBuffer.Format("%s %d %s; options %c%c%c, %c%c%c%c", lCurrentTrack.c_str(), lNbLap, lNbLap > 1 ? "laps" : "lap",
+				(lGameOpts & OPT_ALLOW_WEAPONS) ? 'W' : '_',
+				(lGameOpts & OPT_ALLOW_MINES)   ? 'M' : '_',
+				(lGameOpts & OPT_ALLOW_CANS)    ? 'C' : '_',
+				(lGameOpts & OPT_ALLOW_BASIC)   ? 'B' : '_',
+				(lGameOpts & OPT_ALLOW_BI)		? '2' : '_',
+				(lGameOpts & OPT_ALLOW_CX)		? 'C' : '_',
+				(lGameOpts & OPT_ALLOW_EON)		? 'E' : '_');
+			*/
+			std::string nameBuf = boost::str(
+				boost::format("%s %d %s; options %c%c%c, %c%c%c%c") %
+				lCurrentTrack % lNbLap % (lNbLap > 1 ? "laps" : "lap") %
+				// Options
+				((lGameOpts & OPT_ALLOW_WEAPONS) ? 'W' : '_') %
+				((lGameOpts & OPT_ALLOW_MINES) ? 'M' : '_') %
+				((lGameOpts & OPT_ALLOW_CANS) ? 'C' : '_') %
+				// Crafts
+				((lGameOpts & OPT_ALLOW_BASIC) ? 'B' : '_') %
+				((lGameOpts & OPT_ALLOW_BI) ? '2' : '_') %
+				((lGameOpts & OPT_ALLOW_CX) ? 'C' : '_') %
+				((lGameOpts & OPT_ALLOW_EON) ? 'E' : '_'));
+
+			// Create a net server
+			lCurrentSession->SetPlayerName(cfg->player.nickName.c_str());
+
+			lSuccess = (lCurrentSession->WaitConnections(mMainWindow, nameBuf.c_str()) != FALSE);
+			if (cfg->player.nickName != lCurrentSession->GetPlayerName()) {
+				cfg->player.nickName = lCurrentSession->GetPlayerName();
+				cfg->Save();
+			}
+		}
+		else
+			lSuccess = (lCurrentSession->ConnectToServer(mMainWindow) != FALSE);
+	}
+
+	if (lSuccess) {
+		// start in 13 seconds
+		lCurrentSession->SetSimulationTime(-13000);
+		lSuccess = (lCurrentSession->CreateMainCharacter() != FALSE);
+
+		MainCharacter::MainCharacter* mc = lCurrentSession->GetPlayer(0);
+		controller->ClearActionMap();
+		controller->AddPlayerMaps(1, &mc);
+		controller->AddObserverMaps(observers, 1);
+	}
+
+	if (!lSuccess) {
+		// Clean everytings
+		Clean();
+		delete lCurrentSession;
+	}
+	else {
+		if (GetActiveWindow() != mMainWindow) {
+			FLASHWINFO lFlash;
+			lFlash.cbSize = sizeof(lFlash);
+			lFlash.hwnd = mMainWindow;
+			lFlash.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
+			lFlash.uCount = 5;
+			lFlash.dwTimeout = 0;
+
+			FlashWindowEx(&lFlash);
+		}
+
+		mCurrentSession = lCurrentSession;
+		mGameThread = GameThread::New(this);
+
+		if (mGameThread == NULL) {
+			mCurrentSession = NULL;
+			delete lCurrentSession;
+		}
+	}
+
+	AssignPalette();
+}
+
+
+
+
+
+
+
 void GameApp::NewNetworkSession(BOOL pServer)
 {
 	bool lSuccess = true;
@@ -1989,6 +2214,14 @@ LRESULT CALLBACK GameApp::DispatchFunc(HWND pWindow, UINT pMsgId, WPARAM pWParam
 					This->SetVideoMode(0, 0);
 					This->NewNetworkSession(TRUE);
 					return 0;
+
+					//ID_GAME_NETWORK_CONNECT
+
+				case ID_GAME_CENTRALISED_NETWORK_CONNECT:
+					This->SetVideoMode(0, 0);
+					This->NewCentralisedNetworkSession(FALSE);
+					return 0;
+
 
 				case ID_GAME_NETWORK_CONNECT:
 					This->SetVideoMode(0, 0);

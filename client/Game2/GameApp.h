@@ -146,6 +146,7 @@ class GameApp : public GameDirector
 	public:
 		void NewLocalSession(RulebookPtr rules=RulebookPtr());
 		void NewSplitSession(int pSplitPlayers);
+		void NewCentralisedNetworkSession(BOOL pIsServer);
 		void NewNetworkSession(BOOL pIsServer);
 		void NewInternetSession();
 
